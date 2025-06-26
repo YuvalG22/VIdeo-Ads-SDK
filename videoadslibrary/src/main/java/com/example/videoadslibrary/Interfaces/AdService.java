@@ -6,6 +6,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface AdService {
     @GET("api/ads/{id}")
@@ -16,4 +17,7 @@ public interface AdService {
 
     @POST("api/ads/{id}/click")
     Call<Void> incrementClick(@Path("id") String id);
+
+    @GET("ads/by-location")
+    Call<Ad> getAdByLocation(@Query("lat") double lat, @Query("lng") double lng);
 }

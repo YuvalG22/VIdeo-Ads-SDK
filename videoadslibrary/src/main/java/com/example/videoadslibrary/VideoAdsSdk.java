@@ -1,10 +1,16 @@
 package com.example.videoadslibrary;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
+
 import com.example.videoadslibrary.Interfaces.AdService;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -51,6 +57,46 @@ public class VideoAdsSdk {
                 Toast.makeText(context, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public static void showAdWithLocation(Context context) {
+        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(context, "Location permission not granted", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(location -> {
+                    if (location != null) {
+                        double lat = location.getLatitude();
+                        double lng = location.getLongitude();
+
+                        adService.getAdByLocation(lat, lng).enqueue(new Callback<Ad>() {
+                            @Override
+                            public void onResponse(Call<Ad> call, Response<Ad> response) {
+                                if (response.isSuccessful() && response.body() != null) {
+                                    Ad ad = response.body();
+                                    Intent intent = new Intent(context, AdPlayerActivity.class);
+                                    intent.putExtra("ad_title", ad.title);
+                                    intent.putExtra("video_url", ad.videoUrl);
+                                    intent.putExtra("ad_id", ad._id);
+                                    context.startActivity(intent);
+                                } else {
+                                    Toast.makeText(context, "No ad found for location", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Ad> call, Throwable t) {
+                                Toast.makeText(context, "Error loading ad", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        Toast.makeText(context, "Could not get location", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     public static AdService getAdService(){
