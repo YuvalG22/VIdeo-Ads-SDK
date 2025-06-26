@@ -18,6 +18,6 @@ public interface AdService {
     @POST("api/ads/{id}/click")
     Call<Void> incrementClick(@Path("id") String id);
 
-    @GET("ads/by-location")
+    @GET("api/ads/by-location")
     Call<Ad> getAdByLocation(@Query("lat") double lat, @Query("lng") double lng);
 }

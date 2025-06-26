@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
@@ -72,17 +73,29 @@ public class VideoAdsSdk {
                     if (location != null) {
                         double lat = location.getLatitude();
                         double lng = location.getLongitude();
+                        Log.d("VideoAdsSdk", "Calling getAdByLocation with lat=" + lat + ", lng=" + lng);
 
                         adService.getAdByLocation(lat, lng).enqueue(new Callback<Ad>() {
                             @Override
                             public void onResponse(Call<Ad> call, Response<Ad> response) {
+                                Log.d("VideoAdsSdk", "Response code: " + response.code());
+                                Log.d("VideoAdsSdk", "Body: " + response.body());
+                                Log.d("VideoAdsSdk", "Error: " + response.errorBody());
+
                                 if (response.isSuccessful() && response.body() != null) {
+                                    Log.d("VideoAdsSdk", "have response body");
+
                                     Ad ad = response.body();
                                     Intent intent = new Intent(context, AdPlayerActivity.class);
                                     intent.putExtra("ad_title", ad.title);
                                     intent.putExtra("video_url", ad.videoUrl);
                                     intent.putExtra("ad_id", ad._id);
                                     context.startActivity(intent);
+
+                                    adService.incrementView(ad._id).enqueue(new Callback<Void>() {
+                                        @Override public void onResponse(Call<Void> call, Response<Void> response) {}
+                                        @Override public void onFailure(Call<Void> call, Throwable t) {}
+                                    });
                                 } else {
                                     Toast.makeText(context, "No ad found for location", Toast.LENGTH_SHORT).show();
                                 }
