@@ -45,6 +45,7 @@ public class AdPlayerActivity extends AppCompatActivity {
         player.setMediaItem(mediaItem);
         player.prepare();
         player.play();
+        playerView.setUseController(false);
 
         View overlay = findViewById(R.id.overlay_layout);
         overlay.setOnClickListener(v -> {
@@ -56,9 +57,12 @@ public class AdPlayerActivity extends AppCompatActivity {
                 public void onFailure(Call<Void> call, Throwable t) { }
             });
 
+            player.release();
+
             String advertiserUrl = "https://www.google.com";
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(advertiserUrl));
             startActivity(browserIntent);
+            finish();
         });
     }
 
