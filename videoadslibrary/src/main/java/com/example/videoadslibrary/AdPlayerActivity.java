@@ -39,6 +39,7 @@ public class AdPlayerActivity extends AppCompatActivity {
         playerView = findViewById(R.id.player_view);
         player = new ExoPlayer.Builder(this).build();
         playerView.setPlayer(player);
+        playerView.setUseController(false);
 
         MediaItem mediaItem = MediaItem.fromUri(Uri.parse(videoUrl));
         player.setMediaItem(mediaItem);
