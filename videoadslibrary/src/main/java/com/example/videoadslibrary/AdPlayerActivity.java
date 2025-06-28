@@ -34,6 +34,7 @@ public class AdPlayerActivity extends AppCompatActivity {
         String videoUrl = getIntent().getStringExtra("video_url");
         String adTitle = getIntent().getStringExtra("ad_title");
         String adId = getIntent().getStringExtra("ad_id");
+        String advertiserUrl = getIntent().getStringExtra("link");
         setTitle(adTitle);
 
         playerView = findViewById(R.id.player_view);
@@ -59,7 +60,6 @@ public class AdPlayerActivity extends AppCompatActivity {
 
             player.release();
 
-            String advertiserUrl = "https://www.google.com";
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(advertiserUrl));
             startActivity(browserIntent);
             finish();

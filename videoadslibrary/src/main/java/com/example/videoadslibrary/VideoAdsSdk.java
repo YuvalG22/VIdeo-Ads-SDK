@@ -90,6 +90,7 @@ public class VideoAdsSdk {
                                     intent.putExtra("ad_title", ad.title);
                                     intent.putExtra("video_url", ad.videoUrl);
                                     intent.putExtra("ad_id", ad._id);
+                                    intent.putExtra("link", ad.advertiserLink);
                                     context.startActivity(intent);
 
                                     adService.incrementView(ad._id).enqueue(new Callback<Void>() {
